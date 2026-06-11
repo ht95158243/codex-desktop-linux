@@ -131,7 +131,7 @@ function applyLinuxNativeTitlebarPatch(currentSource) {
     [, electronAlias, lightSymbolAlias, darkSymbolAlias, overlayHeightAlias] = overlayHelperMatch;
     [, , , darkBackgroundAlias, lightBackgroundAlias] = linuxBackgroundMatch;
     const replacement =
-      `case\`primary\`:return ${platformAlias}===\`darwin\`?${opaqueWindowsAlias}?{titleBarStyle:\`hiddenInset\`,trafficLightPosition:${trafficLightAlias}(${zoomAlias})}:{vibrancy:\`menu\`,titleBarStyle:\`hiddenInset\`,trafficLightPosition:${trafficLightAlias}(${zoomAlias})}:${platformAlias}===\`win32\`?{titleBarStyle:\`hidden\`,titleBarOverlay:${overlayHelperAlias}(${zoomAlias})}:${platformAlias}===\`linux\`?{titleBarStyle:\`hidden\`,titleBarOverlay:{color:${electronAlias}.nativeTheme.shouldUseDarkColors?\`#111111\`:${lightBackgroundAlias},symbolColor:${electronAlias}.nativeTheme.shouldUseDarkColors?${lightSymbolAlias}:${darkSymbolAlias},height:Math.round(${LINUX_TITLEBAR_OVERLAY_HEIGHT}*${zoomAlias})}}:{titleBarStyle:\`default\`};`;
+      `case\`primary\`:return ${platformAlias}===\`darwin\`?${opaqueWindowsAlias}?{titleBarStyle:\`hiddenInset\`,trafficLightPosition:${trafficLightAlias}(${zoomAlias})}:{vibrancy:\`menu\`,titleBarStyle:\`hiddenInset\`,trafficLightPosition:${trafficLightAlias}(${zoomAlias})}:${platformAlias}===\`win32\`?{titleBarStyle:\`hidden\`,titleBarOverlay:${overlayHelperAlias}(${zoomAlias})}:${platformAlias}===\`linux\`?{titleBarStyle:\`hidden\`,titleBarOverlay:{color:${lightBackgroundAlias},symbolColor:${darkSymbolAlias},height:Math.round(${LINUX_TITLEBAR_OVERLAY_HEIGHT}*${zoomAlias})}}:{titleBarStyle:\`default\`};`;
 
     primaryTitlebarRegex.lastIndex = 0;
     patchedSource = patchedSource.replace(primaryTitlebarRegex, replacement);
@@ -184,7 +184,7 @@ function applyLinuxNativeTitlebarPatch(currentSource) {
 
   const [, windowAlias, windowTypeAlias, updateAlias, windowsOverlayHelperAlias] = overlaySyncMatch;
   const linuxOverlay =
-    `{color:${electronAlias}.nativeTheme.shouldUseDarkColors?\`#111111\`:${lightBackgroundAlias},symbolColor:${electronAlias}.nativeTheme.shouldUseDarkColors?${lightSymbolAlias}:${darkSymbolAlias},height:Math.round(${LINUX_TITLEBAR_OVERLAY_HEIGHT}*this.windowZooms.get(${windowAlias}.id))}`;
+    `{color:${electronAlias}.nativeTheme?.shouldUseDarkColors?\`#111111\`:${lightBackgroundAlias},symbolColor:${electronAlias}.nativeTheme?.shouldUseDarkColors?${lightSymbolAlias}:${darkSymbolAlias},height:Math.round(${LINUX_TITLEBAR_OVERLAY_HEIGHT}*this.windowZooms.get(${windowAlias}.id))}`;
   const overlaySyncReplacement =
     `installWindowsTitleBarOverlaySync(${windowAlias},${windowTypeAlias}){if((process.platform!==\`win32\`&&process.platform!==\`linux\`)||${windowTypeAlias}!==\`primary\`)return;let ${updateAlias}=()=>{${windowAlias}.isDestroyed()||${windowAlias}.setTitleBarOverlay(process.platform===\`linux\`?${linuxOverlay}:${windowsOverlayHelperAlias}(this.windowZooms.get(${windowAlias}.id)))};return ${electronAlias}.nativeTheme.on(\`updated\`,${updateAlias}),${updateAlias}(),()=>{${electronAlias}.nativeTheme.off(\`updated\`,${updateAlias})}}`;
   const replacedSource = patchedSource.replace(overlaySyncRegex, overlaySyncReplacement);

@@ -20,3 +20,18 @@ linux-features/local/
 # graphify
 graphify-out/
 .graphify_*
+
+# Local Codex build and recovery artifacts
+/dist/
+/dist-before-rebuild-*/
+/codex-app/
+/codex-app-working-*/
+/target/
+/Codex.dmg
+/*.deb
+/*.rpm
+/*.AppImage
+/*.asar
+/*.asar.*
+/app.asar-working-*
+/Backup-restore.docx
